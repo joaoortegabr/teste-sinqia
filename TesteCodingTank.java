@@ -1,5 +1,6 @@
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
@@ -13,43 +14,50 @@ public class TesteCodingTank {
 		DecimalFormat df = new DecimalFormat("#,###.00");
 		Scanner sc = new Scanner(System.in);
 		
-		int tamanhoDoArray;
+		int tamanhoDoArray = 0;
 		List<Double> numList = new ArrayList<Double>();
 		Double soma = 0.0;
 		Double media = 0.0;
+		Boolean flag = true;
 		
 		
-		System.out.println("Quantos números você deseja calcular a média?");
-		tamanhoDoArray = Integer.valueOf(sc.nextInt());
-	
+		while(flag) {
+			try {
+				System.out.println("Quantos números você deseja usar para calcular a média?");
+				tamanhoDoArray = Integer.parseInt(sc.nextLine());
+				if (tamanhoDoArray > 0 ) {
+					flag = false;	
+				} else {
+					System.out.println("O número deve ser maior do que zero.");
+					
+				}
+				
+			}
+			catch (NumberFormatException | InputMismatchException e) {
+				System.out.println("Por favor, digite um número. " + e.getMessage());
+			}
+		}
+		
 		
 		while(numList.size() < tamanhoDoArray) {
-			System.out.println("Digite o número: ");
-			Double num = Double.parseDouble(sc.next());
-			numList.add(num);
+			try {
+				System.out.println("Digite o número: ");
+				Double num = Double.parseDouble(sc.next());
+				numList.add(num);
+			}
+			catch (NumberFormatException | InputMismatchException e) {
+				System.out.println("Por favor, digite um número. " + e.getMessage());
+			}
 		}
 		
 		String tipoDeMedia = "";
 		
-		
-		/* 
-		 *  não consegui validar o texto ARITMETICA ou HARMONICA
-		 *  provavelmente problema de acesso ao valor memória
-		 */
-		
-		/*
-
-		while (!tipoDeMedia.equalsIgnoreCase("A") || !tipoDeMedia.equalsIgnoreCase("H") || tipoDeMedia.isEmpty()) {
+		while (!tipoDeMedia.equalsIgnoreCase("ARITMETICA") && !tipoDeMedia.equalsIgnoreCase("HARMONICA")) {
 			tipoDeMedia = "";
 			System.out.println("Você deseja a média ARITMETICA ou HARMONICA?");
-			tipoDeMedia = sc.next();
+			tipoDeMedia = sc.next().toUpperCase();;
 		}
 		
-		*/
-		
-		System.out.println("Você deseja a média ARITMETICA ou HARMONICA?");
-		tipoDeMedia = sc.next().toUpperCase();
-
 		
 		if (tipoDeMedia.equals("ARITMETICA")) {
 			for(Double x : numList) {
@@ -57,10 +65,11 @@ public class TesteCodingTank {
 			}
 			media = (soma / tamanhoDoArray);
 		} else if (tipoDeMedia.equals("HARMONICA")) {
-			for(Double x : numList) {
-				soma += 1/x;
-			}
-			media = (tamanhoDoArray / soma);
+		
+				for(Double x : numList) {
+					soma += 1/x;
+				}
+				media = (tamanhoDoArray / soma);
 		} else {
 			System.out.println("Opção inválida");
 		}
@@ -69,12 +78,13 @@ public class TesteCodingTank {
 		
 		sc.close();
 		
+		if(numList.contains(0.0) && tipoDeMedia.equals("HARMONICA")) {
+			System.out.println("Um dos números informados foi 'zero'. Não é possível calcular desta forma.\nTente novamente.");
+		} else {
+			System.out.println("Os números digitados foram: " + numList);
+			System.out.println("A média " + tipoDeMedia + " é " + df.format(media));
 		
-		System.out.println("Os números digitados foram: " + numList);
-		System.out.println("A média " + tipoDeMedia + " é " + df.format(media));
-		
-		
-		
+		}
 
 	}
 
